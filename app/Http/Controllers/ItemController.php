@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -13,7 +14,10 @@ class ItemController extends Controller
      */
     public function index()
     {
-        return response()->json(Item::paginate(10), 200);
+        $item = Item::with('category')
+            ->where('is_active', '=', true)
+            ->paginate(10);
+        return response()->json($item, 200);
     }
 
     /**
@@ -24,7 +28,7 @@ class ItemController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'brand' => 'nullable|string|max:255',
-            'category' => 'nullable|string|max:100',
+            'category_id' => 'required|uuid|exists:categories,id',
             'unit' => 'nullable|string|max:50',
             'barcode' => 'nullable|string|max:50|unique:items,barcode',
             'description' => 'nullable|string|max:1000',
@@ -34,12 +38,18 @@ class ItemController extends Controller
             'selling_price' => 'required|numeric|min:0|max:99999.99',
         ]);
 
+        $category = Category::find($validated['category_id']);
+
+        if ($category->is_active == false) {
+            return response()->json(['message' => 'Category is currently inactive.'], 400);
+        }
+
         $item = Item::create($validated);
 
         return response()->json([
             'message' => 'Item created!',
             'data' => $item
-        ], 200);
+        ], 201);
     }
 
     /**
@@ -47,7 +57,7 @@ class ItemController extends Controller
      */
     public function show(string $id)
     {
-        $item = Item::find($id);
+        $item = Item::with('category')->find($id);
 
         if (!$item) {
             return response()->json(['message' => 'Item not found!'], 404);
@@ -65,6 +75,18 @@ class ItemController extends Controller
 
         if (!$item) {
             return response()->json(['message' => 'Item not found!'], 404);
+        }
+
+        if ($request->has('category_id')) {
+            $category = Category::find($request->category_id);
+
+            if (!$category) {
+                return response()->json(['message' => 'Category not found.'], 400);
+            }
+
+            if ($category->is_active == false) {
+                return response()->json(['message' => 'Category is currently inactive.'], 400);
+            }
         }
 
         $item->update($request->all());
