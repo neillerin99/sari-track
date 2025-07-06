@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +20,7 @@ class ItemFactory extends Factory
         return [
             'name' => $this->faker->words(2, true), // e.g. "Pancit Canton"
             'brand' => $this->faker->randomElement(['Lucky Me', 'Bear Brand', 'Nescafe', 'Generic']),
-            'category' => $this->faker->randomElement(['Snacks', 'Drinks', 'Canned Goods', 'Toiletries']),
+            'category_id' => Category::inRandomOrder()->first()->id,
             'unit' => $this->faker->randomElement(['pcs', 'sachet', 'bottle', 'pack']),
             'barcode' => $this->faker->ean13(),
             'description' => $this->faker->sentence(8),

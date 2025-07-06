@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->uuid('category_id')->nullable();
             $table->string('name');
             $table->string('brand')->nullable();
-            $table->string('category')->nullable();
             $table->string('unit')->nullable();
             $table->string('barcode');
             $table->text('description')->nullable();
@@ -25,6 +25,9 @@ return new class extends Migration
             $table->decimal('selling_price', 10, 2);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');
         });
     }
 
