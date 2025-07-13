@@ -12,11 +12,21 @@ class ItemController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $item = Item::with('category')
-            ->where('is_active', '=', true)
-            ->paginate(10);
+        $query = Item::with('category')
+            ->where('is_active', '=', true);
+
+        if ($request->search) {
+            if (!$request->search_by || $request->search_by === 'item') {
+                $query->where('name', 'ilike', "%{$request->search}%");
+            } else {
+                $query->whereHas('category', function ($q) use ($request) {
+                    $q->where('name', 'ilike', "%{$request->search}%");
+                });
+            }
+        }
+        $item = $query->paginate(10);
         return response()->json($item, 200);
     }
 
