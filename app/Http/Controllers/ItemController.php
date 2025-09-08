@@ -6,7 +6,6 @@ use App\Helpers\ResponseHelper;
 use App\Models\Category;
 use App\Models\Item;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class ItemController extends Controller
 {
@@ -39,20 +38,22 @@ class ItemController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'brand' => 'nullable|string|max:255',
-            'category_id' => 'required|uuid|exists:categories,id',
+            'category_id' => 'uuid|exists:categories,id',
             'unit' => 'nullable|string|max:50',
             'barcode' => 'nullable|string|max:50|unique:items,barcode',
             'description' => 'nullable|string|max:1000',
             'quantity' => 'required|integer|min:0',
             'expiration_date' => 'nullable|date|after_or_equal:today',
-            'cost_price' => 'required|numeric|min:0|max:99999.99',
-            'selling_price' => 'required|numeric|min:0|max:99999.99',
+            'cost_price' => 'nullable|numeric|min:0',
+            'selling_price' => 'required|numeric|min:0',
         ]);
 
-        $category = Category::find($validated['category_id']);
+        if ($request->has('category_id')) {
+            $category = Category::find($validated['category_id']);
 
-        if ($category->is_active == false) {
-            return response()->json(['message' => 'Category is currently inactive.'], 400);
+            if ($category->is_active == false) {
+                return response()->json(['message' => 'Category is currently inactive.'], 400);
+            }
         }
 
         $item = Item::create($validated);
