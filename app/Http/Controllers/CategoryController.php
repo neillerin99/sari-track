@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ResponseHelper;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -23,7 +24,7 @@ class CategoryController extends Controller
             $query->where('name', 'ilike', "%{$request->search}%");
         }
 
-        $categories =  $query->paginate(10);
+        $categories = $query->paginate(10);
 
         return response()->json($categories, 200);
     }
@@ -39,7 +40,7 @@ class CategoryController extends Controller
 
         $category = Category::create($validated);
 
-        return response()->json(['message' => 'Category created', 'data' => $category], 200);
+        return ResponseHelper::success($category, 'Category created', 201);
     }
 
     /**
@@ -50,10 +51,10 @@ class CategoryController extends Controller
         $category = Category::find($id);
 
         if (!$category) {
-            return response()->json(['message' => 'Category not found!'], 404);
+            return ResponseHelper::error('Category not found!', '', 404);
         }
 
-        return response()->json(['data' => $category]);
+        return ResponseHelper::success($category, 'Category found!');
     }
 
     /**
@@ -64,7 +65,7 @@ class CategoryController extends Controller
         $category = Category::find($id);
 
         if (!$category) {
-            return response()->json(['message' => 'Category not found!'], 404);
+            return ResponseHelper::error('Category not found!', '', 404);
         }
 
         $category->update($request->all());
@@ -80,7 +81,7 @@ class CategoryController extends Controller
         $category = Category::find($id);
 
         if (!$category) {
-            return response()->json(['message' => 'Category not found!'], 404);
+            return ResponseHelper::error('Category not found!', '', 404);
         }
 
         $category->delete();
