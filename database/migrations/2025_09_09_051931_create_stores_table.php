@@ -30,6 +30,12 @@ return new class extends Migration {
 
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('set null');
         });
+
+        Schema::table('items', function (Blueprint $table) {
+            $table->uuid('store_id')->after('id')->nullable();
+
+            $table->foreign('store_id')->references('id')->on('stores')->onDelete('set null');
+        });
     }
 
     /**

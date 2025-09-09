@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Category;
+use App\Models\Store;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,9 +19,27 @@ class ItemFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->words(2, true), // e.g. "Pancit Canton"
+            'name' => $this->faker->randomElement([
+                'Pancit Canton',
+                'Sardinas',
+                'Corned Beef',
+                'Evaporada',
+                'Tuna Flakes',
+                'SkyFlakes',
+                'Piattos',
+                'Chippy',
+                'Century Tuna',
+                'Ginisa Mix',
+                'Soy Sauce',
+                'Vinegar',
+                'Hotdog',
+                'Cheese Spread',
+                'Yakult',
+                'Royal Softdrink'
+            ]),
             'brand' => $this->faker->randomElement(['Lucky Me', 'Bear Brand', 'Nescafe', 'Generic']),
             'category_id' => Category::inRandomOrder()->first()->id,
+            'store_id' => Store::inRandomOrder()->first()->id,
             'unit' => $this->faker->randomElement(['pcs', 'sachet', 'bottle', 'pack']),
             'barcode' => $this->faker->ean13(),
             'description' => $this->faker->sentence(8),
@@ -30,7 +49,7 @@ class ItemFactory extends Factory
             'selling_price' => function (array $attrs) {
                 return $attrs['cost_price'] + rand(2, 20);
             },
-            'is_active' => $this->faker->boolean(90), // 90% chance active
+            'is_active' => $this->faker->boolean(90),
         ];
     }
 }
