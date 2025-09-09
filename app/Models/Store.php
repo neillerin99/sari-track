@@ -3,29 +3,31 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Category extends Model
+class Store extends Model
 {
-    use HasUuids, HasFactory, SoftDeletes;
+    use HasUuids, SoftDeletes;
 
     protected $fillable = [
         'name',
-        'description',
-        'is_active'
+        'baranggay',
+        'city',
+        'province',
+        'status',
+        'profile'
     ];
 
-    public function items(): HasMany
+    public function categories(): HasMany
     {
-        return $this->hasMany(Item::class);
+        return $this->hasMany(Category::class);
     }
 
-    public function store(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Store::class);
+        return $this->belongsTo(User::class);
     }
 }
