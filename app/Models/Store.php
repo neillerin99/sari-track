@@ -19,7 +19,8 @@ class Store extends Model
         'city',
         'province',
         'status',
-        'profile'
+        'profile',
+        'user_id'
     ];
 
     public function categories(): HasMany
