@@ -2,9 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 
-class CreateStoreRequest extends FormRequest
+class CreateStoreRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -30,4 +29,5 @@ class CreateStoreRequest extends FormRequest
             'profile' => 'nullable|string|max:255',
         ];
     }
+
 }

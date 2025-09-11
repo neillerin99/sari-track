@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
+use App\Http\Requests\CreateItemRequest;
 use App\Models\Category;
 use App\Models\Item;
 use Illuminate\Http\Request;
@@ -33,20 +34,9 @@ class ItemController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateItemRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'brand' => 'nullable|string|max:255',
-            'category_id' => 'uuid|exists:categories,id',
-            'unit' => 'nullable|string|max:50',
-            'barcode' => 'nullable|string|max:50|unique:items,barcode',
-            'description' => 'nullable|string|max:1000',
-            'quantity' => 'required|integer|min:0',
-            'expiration_date' => 'nullable|date|after_or_equal:today',
-            'cost_price' => 'nullable|numeric|min:0',
-            'selling_price' => 'required|numeric|min:0',
-        ]);
+        $validated = $request->validated();
 
         if ($request->has('category_id')) {
             $category = Category::find($validated['category_id']);
