@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ResponseHelper;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -64,6 +66,11 @@ class UserController extends Controller
 
     public function signin(Request $request)
     {
+        $user = User::inRandomOrder()->first();
 
+
+        $token = $user->createToken('singin')->accessToken;
+
+        return ResponseHelper::success($token, 'Login in success');
     }
 }
