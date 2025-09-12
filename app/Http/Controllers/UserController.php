@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Helpers\ResponseHelper;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -12,14 +14,6 @@ class UserController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
     {
         //
     }
@@ -36,14 +30,6 @@ class UserController extends Controller
      * Display the specified resource.
      */
     public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
     {
         //
     }
@@ -66,11 +52,20 @@ class UserController extends Controller
 
     public function signin(Request $request)
     {
-        $user = User::inRandomOrder()->first();
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
 
+        if (!Auth::attempt($credentials)) {
+            return ResponseHelper::error(['Credentials does not exist on our system!'], 'Sign in failed!', 400);
+        }
+
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
         $token = $user->createToken('singin')->accessToken;
 
-        return ResponseHelper::success($token, 'Login in success');
+        return ResponseHelper::success(['token' => $token], 'Login in success');
     }
 }
