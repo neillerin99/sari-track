@@ -34,13 +34,18 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+            ]);
 
-        $category = Category::create($validated);
+            $category = Category::create($validated);
 
-        return ResponseHelper::success($category, 'Category created', 201);
+            return ResponseHelper::success($category, 'Category created', 201);
+        } catch (\Throwable $th) {
+            return ResponseHelper::error($th, 'Server Error', 500);
+        }
+
     }
 
     /**
@@ -62,15 +67,20 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $category = Category::find($id);
+        try {
+            $category = Category::find($id);
 
-        if (!$category) {
-            return ResponseHelper::error('Category not found!', '', 404);
+            if (!$category) {
+                return ResponseHelper::error('Category not found!', '', 404);
+            }
+
+            $category->update($request->all());
+
+            return response()->json(['data' => $category], 200);
+        } catch (\Throwable $th) {
+            return ResponseHelper::error($th, 'Server Error', 500);
         }
 
-        $category->update($request->all());
-
-        return response()->json(['data' => $category], 200);
     }
 
     /**
@@ -78,14 +88,19 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        $category = Category::find($id);
+        try {
+            $category = Category::find($id);
 
-        if (!$category) {
-            return ResponseHelper::error('Category not found!', '', 404);
+            if (!$category) {
+                return ResponseHelper::error('Category not found!', '', 404);
+            }
+
+            $category->delete();
+
+            return response()->json(['message' => 'Category deleted', 'data' => $category], 200);
+        } catch (\Throwable $th) {
+            return ResponseHelper::error($th, 'Server Error', 500);
         }
 
-        $category->delete();
-
-        return response()->json(['message' => 'Category deleted', 'data' => $category], 200);
     }
 }

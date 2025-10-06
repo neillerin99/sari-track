@@ -11,10 +11,21 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('/signin', [UserController::class, 'signin']);
 
-Route::apiResources([
-    'items' => ItemController::class,
-    'categories' => CategoryController::class,
-    'stores' => StoreController::class
-]);
+// Public Routes
+Route::prefix('users')->group(function () {
+    Route::post('/', [UserController::class, 'store']);
+    Route::post('signin', [UserController::class, 'signin']);
+});
+
+
+// Protected Routes
+Route::middleware('auth:api')->group(function () {
+    Route::apiResources([
+        'items' => ItemController::class,
+        'categories' => CategoryController::class,
+        'stores' => StoreController::class,
+    ]);
+    Route::apiResource('users', UserController::class)->except('store');
+});
+
