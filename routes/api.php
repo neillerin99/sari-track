@@ -12,15 +12,20 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
+// Public Routes
 Route::prefix('users')->group(function () {
+    Route::post('/', [UserController::class, 'store']);
     Route::post('signin', [UserController::class, 'signin']);
 });
 
+
+// Protected Routes
 Route::middleware('auth:api')->group(function () {
     Route::apiResources([
         'items' => ItemController::class,
         'categories' => CategoryController::class,
-        'stores' => StoreController::class
+        'stores' => StoreController::class,
     ]);
+    Route::apiResource('users', UserController::class)->except('store');
 });
 
