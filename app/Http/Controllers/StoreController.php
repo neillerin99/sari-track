@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Helpers\ResponseHelper;
 use App\Http\Requests\CreateStoreRequest;
 use App\Models\Store;
-use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StoreController extends Controller
 {
@@ -30,15 +30,22 @@ class StoreController extends Controller
      */
     public function store(CreateStoreRequest $request)
     {
-        //TODO: Append authenticated user using Auth()
+        try {
+            $validated = $request->validated();
 
-        $validated = $request->validated();
+            $user = Auth::user();
 
-        $store = Store::create([
-            ...$validated,
-            'user_id' => '01992d18-d64a-70a1-a6db-ffebc7caf6b4'
-        ]);
-        return ResponseHelper::success($store, 'Store created!');
+            $store = Store::create([
+                ...$validated,
+                'user_id' => $user->id,
+            ]);
+            return ResponseHelper::success($store, 'Store created!');
+        } catch (\Throwable $th) {
+            return ResponseHelper::error($th, 'Server Error', 500);
+        }
+
+
+
     }
 
     /**
@@ -60,14 +67,20 @@ class StoreController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $store = Store::find($id);
+        try {
+            $store = Store::find($id);
 
-        if (!$store) {
-            return ResponseHelper::error([], 'Store not found!', 404);
+            if (!$store) {
+                return ResponseHelper::error([], 'Store not found!', 404);
+            }
+
+            $store->update($request->all());
+            return ResponseHelper::success($store, 'Item updated!');
+        } catch (\Throwable $th) {
+            return ResponseHelper::error($th, 'Server Error', 500);
         }
 
-        $store->update($request->all());
-        return ResponseHelper::success($store, 'Item updated!');
+
     }
 
     /**
@@ -75,14 +88,19 @@ class StoreController extends Controller
      */
     public function destroy(string $id)
     {
-        $store = Store::find($id);
+        try {
+            $store = Store::find($id);
 
-        if (!$store) {
-            return ResponseHelper::error([], 'Store not found!', 404);
+            if (!$store) {
+                return ResponseHelper::error([], 'Store not found!', 404);
+            }
+
+            $store->delete();
+
+            return ResponseHelper::success($store, 'Store deleted!');
+        } catch (\Throwable $th) {
+            return ResponseHelper::error($th, 'Server Error', 500);
         }
 
-        $store->delete();
-
-        return ResponseHelper::success($store, 'Store deleted!');
     }
 }

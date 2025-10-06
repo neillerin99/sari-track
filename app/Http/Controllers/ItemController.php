@@ -36,18 +36,22 @@ class ItemController extends Controller
      */
     public function store(CreateItemRequest $request)
     {
-        $validated = $request->validated();
+        try {
+            $validated = $request->validated();
 
-        if ($request->has('category_id')) {
-            $category = Category::find($validated['category_id']);
+            if ($request->has('category_id')) {
+                $category = Category::find($validated['category_id']);
 
-            if ($category->is_active == false) {
-                return response()->json(['message' => 'Category is currently inactive.'], 400);
+                if ($category->is_active == false) {
+                    return response()->json(['message' => 'Category is currently inactive.'], 400);
+                }
             }
-        }
 
-        $item = Item::create($validated);
-        return ResponseHelper::success($item, 'Item created!', 201);
+            $item = Item::create($validated);
+            return ResponseHelper::success($item, 'Item created!', 201);
+        } catch (\Throwable $th) {
+            return ResponseHelper::error($th, 'Server Error', 500);
+        }
     }
 
     /**
@@ -69,26 +73,30 @@ class ItemController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $item = Item::find($id);
+        try {
+            $item = Item::find($id);
 
-        if (!$item) {
-            return response()->json(['message' => 'Item not found!'], 404);
-        }
-
-        if ($request->has('category_id')) {
-            $category = Category::find($request->category_id);
-
-            if (!$category) {
-                return ResponseHelper::error('Category not found', '', 400);
+            if (!$item) {
+                return response()->json(['message' => 'Item not found!'], 404);
             }
 
-            if ($category->is_active == false) {
-                return ResponseHelper::error('Category is currently inactive.', '', 400);
-            }
-        }
+            if ($request->has('category_id')) {
+                $category = Category::find($request->category_id);
 
-        $item->update($request->all());
-        return ResponseHelper::success($item, 'Item updated!');
+                if (!$category) {
+                    return ResponseHelper::error('Category not found', '', 400);
+                }
+
+                if ($category->is_active == false) {
+                    return ResponseHelper::error('Category is currently inactive.', '', 400);
+                }
+            }
+
+            $item->update($request->all());
+            return ResponseHelper::success($item, 'Item updated!');
+        } catch (\Throwable $th) {
+            return ResponseHelper::error($th, 'Server Error', 500);
+        }
     }
 
     /**
@@ -96,14 +104,18 @@ class ItemController extends Controller
      */
     public function destroy(string $id)
     {
-        $item = Item::find($id);
+        try {
+            $item = Item::find($id);
 
-        if (!$item) {
-            return ResponseHelper::error('Item not found', '', 404);
+            if (!$item) {
+                return ResponseHelper::error('Item not found', '', 404);
+            }
+
+            $item->delete();
+
+            return ResponseHelper::success($item, 'Item deleted');
+        } catch (\Throwable $th) {
+            return ResponseHelper::error($th, 'Server Error', 500);
         }
-
-        $item->delete();
-
-        return ResponseHelper::success($item, 'Item deleted');
     }
 }

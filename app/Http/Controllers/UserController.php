@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -66,6 +64,6 @@ class UserController extends Controller
 
         $token = $user->createToken('singin')->accessToken;
 
-        return ResponseHelper::success(['token' => $token], 'Login in success');
+        return ResponseHelper::success(['token' => $token, 'user' => $user], 'Login in success');
     }
 }
