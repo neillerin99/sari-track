@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Credit extends Model
@@ -12,7 +13,6 @@ class Credit extends Model
 
     protected $fillable = [
         'store_id',
-        'quantity',
         'total_price',
         'name',
         'status',
@@ -26,5 +26,12 @@ class Credit extends Model
     public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class);
+    }
+
+    public function items(): BelongsToMany
+    {
+        return $this->belongsToMany(Item::class)
+            ->withPivot('quantity', 'price')
+            ->withTimestamps();
     }
 }

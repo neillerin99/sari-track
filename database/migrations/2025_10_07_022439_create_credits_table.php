@@ -12,9 +12,7 @@ return new class extends Migration {
     {
         Schema::create('credits', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('item_id')->nullable();
             $table->uuid('store_id')->nullable();
-            $table->integer('quantity');
             $table->decimal('total_price', 10, 2);
             $table->string('name');
             $table->enum('status', ['unpaid', 'paid'])->default('unpaid');
@@ -23,7 +21,6 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('item_id')->references('id')->on('items')->onDelete('SET NULL');
             $table->foreign('store_id')->references('id')->on('users')->onDelete('SET NULL');
         });
     }
