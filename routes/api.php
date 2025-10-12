@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CreditController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserController;
@@ -25,6 +26,7 @@ Route::middleware('auth:api')->group(function () {
         'items' => ItemController::class,
         'categories' => CategoryController::class,
         'stores' => StoreController::class,
+        'credits' => CreditController::class,
     ]);
     Route::apiResource('users', UserController::class)->except('store', 'index');
 });

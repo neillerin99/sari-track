@@ -96,24 +96,20 @@ class UserController extends Controller
 
     public function signin(Request $request)
     {
-        try {
-            $credentials = $request->validate([
-                'email' => ['required', 'email'],
-                'password' => ['required'],
-            ]);
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
 
-            if (!Auth::attempt($credentials)) {
-                return ResponseHelper::error(['Credentials does not exist on our system!'], 'Sign in failed!', 400);
-            }
-
-            /** @var \App\Models\User $user */
-            $user = Auth::user();
-
-            $token = $user->createToken('singin')->accessToken;
-
-            return ResponseHelper::success(['token' => $token, 'user' => $user], 'Login in success');
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        if (!Auth::attempt($credentials)) {
+            return ResponseHelper::error(['Credentials does not exist on our system!'], 'Sign in failed!', 400);
         }
+
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $token = $user->createToken('singin')->accessToken;
+
+        return ResponseHelper::success(['token' => $token, 'user' => $user], 'Login in success');
     }
 }

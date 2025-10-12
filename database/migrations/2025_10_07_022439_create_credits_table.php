@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('store_id')->references('id')->on('users')->onDelete('SET NULL');
+            $table->foreign('store_id')->references('id')->on('stores')->onDelete('SET NULL');
         });
     }
 
