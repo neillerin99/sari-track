@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
-use App\Http\Requests\CreateStoreRequest;
+use App\Http\Requests\Stores\CreateStoreRequest;
 use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,9 +43,6 @@ class StoreController extends Controller
         } catch (\Throwable $th) {
             return ResponseHelper::error($th, 'Server Error', 500);
         }
-
-
-
     }
 
     /**
@@ -79,8 +76,6 @@ class StoreController extends Controller
         } catch (\Throwable $th) {
             return ResponseHelper::error($th, 'Server Error', 500);
         }
-
-
     }
 
     /**

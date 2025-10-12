@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
-use App\Http\Requests\CreateItemRequest;
+use App\Http\Requests\Items\CreateItemRequest;
 use App\Models\Category;
 use App\Models\Item;
 use Illuminate\Http\Request;
