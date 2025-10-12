@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
+use App\Http\Requests\Categories\CreateCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -32,12 +33,10 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateCategoryRequest $request)
     {
         try {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-            ]);
+            $validated = $request->validate();
 
             $category = Category::create($validated);
 
