@@ -40,8 +40,8 @@ class StoreController extends Controller
                 'user_id' => $user->id,
             ]);
             return ResponseHelper::success($store, 'Store created!');
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
     }
 
@@ -73,8 +73,8 @@ class StoreController extends Controller
 
             $store->update($request->all());
             return ResponseHelper::success($store, 'Item updated!');
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
     }
 
@@ -93,8 +93,8 @@ class StoreController extends Controller
             $store->delete();
 
             return ResponseHelper::success($store, 'Store deleted!');
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
 
     }

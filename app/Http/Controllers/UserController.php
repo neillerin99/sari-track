@@ -34,8 +34,8 @@ class UserController extends Controller
 
             $user = User::create($validated);
             return ResponseHelper::success($user, 'User registered!');
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
     }
 
@@ -52,8 +52,8 @@ class UserController extends Controller
             }
 
             return ResponseHelper::success($user, 'User found!');
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
     }
 
@@ -72,8 +72,8 @@ class UserController extends Controller
             $user->update($request->validated());
 
             return ResponseHelper::success($user, 'User data updated!');
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
     }
 
@@ -89,27 +89,32 @@ class UserController extends Controller
             }
             $user->delete();
             return ResponseHelper::success($user, 'Store deleted!');
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
     }
 
     public function signin(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+        try {
+            $credentials = $request->validate([
+                'email' => ['required', 'email'],
+                'password' => ['required'],
+            ]);
 
-        if (!Auth::attempt($credentials)) {
-            return ResponseHelper::error(['Credentials does not exist on our system!'], 'Sign in failed!', 400);
+            if (!Auth::attempt($credentials)) {
+                return ResponseHelper::error(['Credentials does not exist on our system!'], 'Sign in failed!', 400);
+            }
+
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
+
+            $token = $user->createToken('singin')->accessToken;
+
+            return ResponseHelper::success(['token' => $token, 'user' => $user], 'Login in success');
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
 
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-
-        $token = $user->createToken('singin')->accessToken;
-
-        return ResponseHelper::success(['token' => $token, 'user' => $user], 'Login in success');
     }
 }

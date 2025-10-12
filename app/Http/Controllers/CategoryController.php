@@ -41,8 +41,8 @@ class CategoryController extends Controller
             $category = Category::create($validated);
 
             return ResponseHelper::success($category, 'Category created', 201);
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
 
     }
@@ -76,8 +76,8 @@ class CategoryController extends Controller
             $category->update($request->all());
 
             return response()->json(['data' => $category], 200);
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
 
     }
@@ -97,8 +97,8 @@ class CategoryController extends Controller
             $category->delete();
 
             return response()->json(['message' => 'Category deleted', 'data' => $category], 200);
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
 
     }

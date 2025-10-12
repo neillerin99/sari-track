@@ -49,8 +49,8 @@ class ItemController extends Controller
 
             $item = Item::create($validated);
             return ResponseHelper::success($item, 'Item created!', 201);
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
     }
 
@@ -94,8 +94,8 @@ class ItemController extends Controller
 
             $item->update($request->all());
             return ResponseHelper::success($item, 'Item updated!');
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
     }
 
@@ -114,8 +114,8 @@ class ItemController extends Controller
             $item->delete();
 
             return ResponseHelper::success($item, 'Item deleted');
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
     }
 }
