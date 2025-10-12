@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
+use App\Http\Requests\Users\CreateUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,15 +21,10 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateUserRequest $request)
     {
         try {
-            $validated = $request->validate([
-                'email' => ['required', 'email'],
-                'password' => ['required'],
-                'name' => ['required', 'string', 'min:8'],
-            ]);
-
+            $validated = $request->validated();
             if (User::where('email', $validated['email'])->first()) {
                 return ResponseHelper::error(['Email already exists!'], 'Register failed!', 400);
             }

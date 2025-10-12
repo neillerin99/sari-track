@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Categories;
 
+use Illuminate\Foundation\Http\FormRequest;
 
-class CreateStoreRequest extends BaseRequest
+class CreateCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,12 +23,6 @@ class CreateStoreRequest extends BaseRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'baranggay' => 'nullable|string|max:50',
-            'city' => 'nullable|string|max:50',
-            'unit' => 'nullable|string|max:50',
-            'province' => 'required|string|max:50',
-            'profile' => 'nullable|string|max:255',
         ];
     }
-
 }
