@@ -36,7 +36,7 @@ class CategoryController extends Controller
     public function store(CreateCategoryRequest $request)
     {
         try {
-            $validated = $request->validate();
+            $validated = $request->validated();
 
             $category = Category::create($validated);
 
