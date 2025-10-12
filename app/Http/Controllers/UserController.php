@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
 use App\Http\Requests\Users\CreateUserRequest;
+use App\Http\Requests\Users\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +16,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        // TODO: No api route yet as this route is not needed
+        $users = User::paginate(10);
+        return ResponseHelper::success($users);
     }
 
     /**
@@ -26,7 +29,7 @@ class UserController extends Controller
         try {
             $validated = $request->validated();
             if (User::where('email', $validated['email'])->first()) {
-                return ResponseHelper::error(['Email already exists!'], 'Register failed!', 400);
+                return ResponseHelper::error(['Email already exists!'], 'Error storing user!', 400);
             }
 
             $user = User::create($validated);
@@ -41,15 +44,37 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            $user = User::find($id);
+
+            if (!$user) {
+                return ResponseHelper::error(['User not found!'], 'Error fetching user!', 404);
+            }
+
+            return ResponseHelper::success($user, 'User found!');
+        } catch (\Throwable $th) {
+            return ResponseHelper::error($th, 'Server Error', 500);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateUserRequest $request, string $id)
     {
-        //
+        try {
+            $user = User::find($id);
+
+            if (!$user) {
+                return ResponseHelper::error(['User not found!'], 'Error updating user!', 404);
+            }
+
+            $user->update($request->validated());
+
+            return ResponseHelper::success($user, 'User data updated!');
+        } catch (\Throwable $th) {
+            return ResponseHelper::error($th, 'Server Error', 500);
+        }
     }
 
     /**

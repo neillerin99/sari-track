@@ -26,6 +26,6 @@ Route::middleware('auth:api')->group(function () {
         'categories' => CategoryController::class,
         'stores' => StoreController::class,
     ]);
-    Route::apiResource('users', UserController::class)->except('store');
+    Route::apiResource('users', UserController::class)->except('store', 'index');
 });
 
