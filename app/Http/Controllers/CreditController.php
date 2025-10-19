@@ -5,10 +5,16 @@ namespace App\Http\Controllers;
 use App\Helpers\ResponseHelper;
 use App\Http\Requests\Credit\CreateCreditRequest;
 use App\Models\Credit;
+use App\Services\CreditService;
 use Illuminate\Http\Request;
 
 class CreditController extends Controller
 {
+    public function __construct(private CreditService $credit_service)
+    {
+
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -35,20 +41,15 @@ class CreditController extends Controller
     {
         try {
             $validated = (object) $request->validated();
-            // Compute total price
             $computed_total = 5;
             // Check if $request->total_price matches computed price
             if ($computed_total != $request->total_price) {
                 return ResponseHelper::error('Total price does not match computed price!', 'Error Storing Credit', 400);
             }
-
-            $credit = Credit::create([
-                'store_id' => $validated->store_id,
-                'name' => $validated->name,
-                'total_price' => $request->total_price,
-                'notes' => $request->notes,
-            ]);
-            return ResponseHelper::success($credit, 'Credit created!', 201);
+            $result = $this->credit_service->process($request, $validated);
+            if ($result->status === 'success') {
+                return ResponseHelper::success($result, 'Credit created!', 201);
+            }
         } catch (\Exception $e) {
             return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
@@ -59,7 +60,15 @@ class CreditController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            $credit = Credit::with('items')->find($id);
+            if (!$credit) {
+                return ResponseHelper::error(['Credit not found!'], 'Credit fetch failed', 404);
+            }
+            return ResponseHelper::success($credit, 'Credit found!');
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
+        }
     }
 
     /**
@@ -75,6 +84,15 @@ class CreditController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $credit = Credit::find($id);
+            if (!$credit) {
+                return ResponseHelper::error(['Credit not found!'], 'Credit deletion failed', 404);
+            }
+            $credit->delete();
+            return ResponseHelper::success($credit, 'Store deleted!');
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
+        }
     }
 }

@@ -31,8 +31,9 @@ class Credit extends Model
 
     public function items(): BelongsToMany
     {
-        return $this->belongsToMany(Item::class)
+        return $this->belongsToMany(Item::class, 'credit_items')
             ->withPivot('quantity', 'price')
+            ->as('credit_items')
             ->withTimestamps();
     }
 }
