@@ -18,7 +18,8 @@ class Credit extends Model
         'name',
         'status',
         'paid_on',
-        'notes'
+        'notes',
+        'is_free_form'
     ];
     protected $casts = [
         'paid_on' => 'date'

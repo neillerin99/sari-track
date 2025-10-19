@@ -41,12 +41,12 @@ class CreditController extends Controller
     {
         try {
             $validated = (object) $request->validated();
-            $computed_total = 5;
-            // Check if $request->total_price matches computed price
-            if ($computed_total != $request->total_price) {
-                return ResponseHelper::error('Total price does not match computed price!', 'Error Storing Credit', 400);
-            }
             $result = $this->credit_service->process($request, $validated);
+
+            if ($result->status === 'failed') {
+                return ResponseHelper::error($result->data, 'Credit store failed', 404);
+            }
+
             if ($result->status === 'success') {
                 return ResponseHelper::success($result, 'Credit created!', 201);
             }

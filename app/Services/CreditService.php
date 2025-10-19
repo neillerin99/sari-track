@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Helpers\ResponseHelper;
 use App\Models\Credit;
 use App\Models\CreditItem;
 use DB;
@@ -18,10 +17,27 @@ class CreditService
                 'name' => $validated->name,
                 'total_price' => $request->total_price,
                 'notes' => $request->notes,
+                'is_free_form' => $request->is_free_form
             ]);
 
+            if ($request->boolean('is_free_form') === true) {
+                return (object) [
+                    'status' => 'success',
+                    'data' => $credit
+                ];
+            }
+
             if ($request->items) {
-                foreach ($request->items as $item) {
+                $items = collect($request->items);
+
+                if ($items->sum('price') != $request->total_price) {
+                    return (object) [
+                        'status' => 'failed',
+                        'data' => 'Total price does not match computed price!'
+                    ];
+                }
+
+                $items->map(function ($item) use ($credit) {
                     $item = (object) $item;
                     CreditItem::create([
                         'credit_id' => $credit->id,
@@ -29,16 +45,13 @@ class CreditService
                         'quantity' => $item->quantity,
                         'price' => $item->price
                     ]);
-                }
+                });
             }
-
             return (object) [
                 'status' => 'success',
                 'data' => $credit
             ];
         });
-
         return $result;
-
     }
 }
