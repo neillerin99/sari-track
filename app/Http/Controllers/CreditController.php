@@ -76,7 +76,16 @@ class CreditController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            $credit = Credit::find($id);
+            if (!$credit) {
+                return ResponseHelper::error(['Credit not found!'], 'Credit deletion failed', 404);
+            }
+            $credit->update($request->all());
+            return ResponseHelper::success($credit, 'Credit updated!');
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
+        }
     }
 
     /**
