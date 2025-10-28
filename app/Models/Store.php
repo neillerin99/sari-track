@@ -32,4 +32,9 @@ class Store extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function contacts(): HasMany
+    {
+        return $this->hasMany(Credit::class);
+    }
 }
