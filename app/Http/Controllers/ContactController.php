@@ -6,7 +6,6 @@ use App\Helpers\ResponseHelper;
 use App\Http\Requests\Contacts\CreateContactRequest;
 use App\Http\Requests\Contacts\UpdateContactRequest;
 use App\Models\Contact;
-use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Request;
 
 use function Pest\Laravel\call;
@@ -18,15 +17,19 @@ class ContactController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Contact::query();
+        try {
+            $query = Contact::query();
 
-        if ($request->has('search')) {
-            $query->where('name', 'ilike', "%{$request->search}%")->orWhere('lastname', 'ilike', "%{$request->search}%");
+            if ($request->has('search')) {
+                $query->where('name', 'ilike', "%{$request->search}%")->orWhere('lastname', 'ilike', "%{$request->search}%");
+            }
+
+            $contacts = $query->where('store_id', $request->store_id)->paginate(10);
+            return ResponseHelper::success($contacts, 'Contacts fetched!', 200);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
 
-        $contacts = $query->paginate(10);
-
-        return response()->json($contacts, 200);
     }
 
     /**
