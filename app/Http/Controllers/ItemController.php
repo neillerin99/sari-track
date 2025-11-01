@@ -15,20 +15,25 @@ class ItemController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Item::with('category')
-            ->where('is_active', '=', true);
+        try {
+            $query = Item::with('category')
+                ->where('is_active', '=', true)
+                ->where('store_id', $request->store_id);
 
-        if ($request->search) {
-            if (!$request->search_by || $request->search_by === 'item') {
-                $query->where('name', 'ilike', "%{$request->search}%");
-            } else {
-                $query->whereHas('category', function ($q) use ($request) {
-                    $q->where('name', 'ilike', "%{$request->search}%");
-                });
+            if ($request->search) {
+                if (!$request->search_by || $request->search_by === 'item') {
+                    $query->where('name', 'ilike', "%{$request->search}%");
+                } else {
+                    $query->whereHas('category', function ($q) use ($request) {
+                        $q->where('name', 'ilike', "%{$request->search}%");
+                    });
+                }
             }
+            $items = $query->paginate(10);
+            return ResponseHelper::success($items, 'Items fetched!', 200, true);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
-        $item = $query->paginate(10);
-        return response()->json($item, 200);
     }
 
     /**

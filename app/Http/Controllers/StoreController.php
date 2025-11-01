@@ -15,14 +15,17 @@ class StoreController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Store::with('user')->where('status', '=', 'active');
-
-        if ($request->filled('search')) {
-            $query->where('name', 'ilike', "%{$request->search}%");
+        try {
+            $query = Store::with('user')->where('status', '=', 'active');
+            $user = Auth::user();
+            if ($request->filled('search')) {
+                $query->where('name', 'ilike', "%{$request->search}%");
+            }
+            $items = $query->where('user_id', $user->id)->paginate(10)->appends($request->query());
+            return ResponseHelper::success($items, 'Stores fetched!', 200, true);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
-
-        $item = $query->paginate(10)->appends($request->query());
-        return response()->json($item, 200);
     }
 
     /**
