@@ -28,7 +28,7 @@ class CreditController extends Controller
             }
 
             $credits = $query->where('store_id', $request->store_id)->paginate(10);
-            return ResponseHelper::success($credits, 'Credits fetched!', 201);
+            return ResponseHelper::success($credits, 'Credits fetched!', 201, true);
         } catch (\Exception $e) {
             return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }

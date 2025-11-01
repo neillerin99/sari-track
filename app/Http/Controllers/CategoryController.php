@@ -14,20 +14,21 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Category::query();
-
-        if ($request->filled('include')) {
-            $includes = explode(',', $request->input('include'));
-            $query->with($includes);
+        try {
+            $query = Category::query()->where('store_id', $request->store_id)->orWhere('is_global', true);
+            if ($request->filled('include')) {
+                $includes = explode(',', $request->input('include'));
+                $query->with($includes);
+            }
+            if ($request->has('search')) {
+                $query->where('name', 'ilike', "%{$request->search}%");
+            }
+            $categories = $query->paginate(10)
+                ->appends($request->query());
+            return ResponseHelper::success($categories, 'Categories fetched!', 200, true);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
-
-        if ($request->has('search')) {
-            $query->where('name', 'ilike', "%{$request->search}%");
-        }
-
-        $categories = $query->paginate(10);
-
-        return response()->json($categories, 200);
     }
 
     /**

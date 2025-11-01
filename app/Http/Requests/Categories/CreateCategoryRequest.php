@@ -23,6 +23,7 @@ class CreateCategoryRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
+            'store_id' => 'required|uuid',
         ];
     }
 }
