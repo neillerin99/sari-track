@@ -46,4 +46,12 @@ class Item extends Model
             ->withPivot('quantity', 'price')
             ->withTimestamps();
     }
+
+    public function bottles(): BelongsToMany
+    {
+        return $this->belongsToMany(Bottle::class, 'bottle_items')
+            ->withPivot('quantity')
+            ->as('item_bottles')
+            ->withTimestamps();
+    }
 }
