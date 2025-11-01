@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class CreditService
 {
-    public function process(Request $request, $validated)
+    public function store_data(Request $request, $validated)
     {
         DB::beginTransaction();
         try {

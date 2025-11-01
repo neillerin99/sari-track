@@ -17,7 +17,7 @@ class Bottle extends Model
         'name',
         'status',
         'notes',
-        'total_deposit',
+        'price',
         'is_free_form'
     ];
 

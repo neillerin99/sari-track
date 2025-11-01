@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BottleController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CreditController;
@@ -28,7 +29,8 @@ Route::middleware('auth:api')->group(function () {
         'categories' => CategoryController::class,
         'stores' => StoreController::class,
         'credits' => CreditController::class,
-        'contacts' => ContactController::class
+        'contacts' => ContactController::class,
+        'bottles' => BottleController::class
     ]);
     Route::apiResource('users', UserController::class)->except('store', 'index');
 });
