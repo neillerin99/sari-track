@@ -54,4 +54,12 @@ class Item extends Model
             ->as('item_bottles')
             ->withTimestamps();
     }
+
+    public function restocks(): BelongsToMany
+    {
+        return $this->belongsToMany(Restock::class)
+            ->withPivot('name', 'quantity')
+            ->as('restock_items')
+            ->withTimestamps();
+    }
 }
