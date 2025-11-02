@@ -14,14 +14,14 @@ return new class extends Migration {
             $table->uuid('id')->primary();
             $table->uuid('restock_id')->nullable();
             $table->uuid('item_id')->nullable();
-            $table->string('name');
+            $table->string('name')->nullable();
             $table->integer('quantity');
             $table->boolean('checked')->default(false);
             $table->text('notes')->nullable();
             $table->timestamps();
 
             $table->foreign('restock_id')->references('id')->on('restocks')->onDelete('SET NULL');
-            $table->foreign('item_id')->references('id')->on('stores')->onDelete('SET NULL');
+            $table->foreign('item_id')->references('id')->on('items')->onDelete('SET NULL');
         });
     }
 

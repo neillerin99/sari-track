@@ -14,7 +14,7 @@ return new class extends Migration {
         Schema::create('restocks', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('store_id')->nullable();
-            $table->string('name');
+            $table->string('name')->nullable();
             $table->enum('status', ['draft', 'ready', 'completed', 'cancelled'])->default('draft');
             $table->text('notes')->nullable();
             $table->dateTime('buy_date')->nullable();

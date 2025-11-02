@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Bottles;
+namespace App\Http\Requests\Restock;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateBottleRequest extends FormRequest
+class CreateRestockRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,9 +22,10 @@ class UpdateBottleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|string|max:255',
-            'price' => 'sometimes|numeric|min:0',
-            'notes' => 'sometimes|string'
+            'store_id' => 'required|uuid',
+            'name' => 'required|string|max:100',
+            'notes' => 'nullable|string|max:255',
+            'buy_date' => 'nullable'
         ];
     }
 }
