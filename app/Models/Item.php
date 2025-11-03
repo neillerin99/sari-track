@@ -62,4 +62,18 @@ class Item extends Model
             ->as('restock_items')
             ->withTimestamps();
     }
+
+    public function sales(): BelongsToMany
+    {
+        return $this->belongsToMany(Sale::class, 'sale_items')
+            ->withPivot(
+                'name',
+                'price',
+                'quantity',
+                'subtotal',
+                'is_manual'
+            )
+            ->as('sale_items')
+            ->withTimestamps();
+    }
 }
