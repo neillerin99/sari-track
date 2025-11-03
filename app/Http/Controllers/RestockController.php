@@ -41,7 +41,7 @@ class RestockController extends Controller
     {
         try {
             $validated = $request->validated();
-            $result = $this->restock_service->store_data($validated, $request->items);
+            $result = $this->restock_service->storeData($validated, $request->items);
             if ($result->status === 'failed') {
                 return ResponseHelper::error($result->data, 'Credit store failed', 404);
             }

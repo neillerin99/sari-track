@@ -3,11 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
+use App\Http\Requests\Sales\CreateSaleRequest;
 use App\Models\Sale;
+use App\Services\SaleService;
 use Illuminate\Http\Request;
 
 class SaleController extends Controller
 {
+    public function __construct(protected SaleService $sale_service)
+    {
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -31,12 +37,18 @@ class SaleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateSaleRequest $request)
     {
         try {
-            $validated = $request->validate(['customer_name' => 'required']);
-            $sale = Sale::create($request->all());
-            return ResponseHelper::success($sale, 'Sale created', 201);
+            $validated = $request->validated();
+            $result = $this->sale_service->storeData($validated);
+            if ($result->status === 'failed') {
+                return ResponseHelper::error($result->data, 'Credit store failed', 404);
+            }
+
+            if ($result->status === 'success') {
+                return ResponseHelper::success($result->data, 'Credit created!', 201);
+            }
         } catch (\Exception $e) {
             return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }

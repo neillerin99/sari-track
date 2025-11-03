@@ -41,7 +41,7 @@ class CreditController extends Controller
     {
         try {
             $validated = (object) $request->validated();
-            $result = $this->credit_service->store_data($request, $validated);
+            $result = $this->credit_service->storeData($request, $validated);
 
             if ($result->status === 'failed') {
                 return ResponseHelper::error($result->data, 'Credit store failed', 404);
