@@ -20,6 +20,10 @@ class Restock extends Model
         'buy_date'
     ];
 
+    protected $casts = [
+        'buy_date' => 'date'
+    ];
+
     public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class);

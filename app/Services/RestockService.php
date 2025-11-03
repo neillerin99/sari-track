@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class RestockService
 {
-    public function store_data(array $validated, $items)
+    public function storeData(array $validated, $items)
     {
         DB::beginTransaction();
         try {

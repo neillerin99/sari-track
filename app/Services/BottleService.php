@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class BottleService
 {
-    public function store_data(Request $request, object $validated)
+    public function storeData(Request $request, object $validated)
     {
 
         DB::beginTransaction();
