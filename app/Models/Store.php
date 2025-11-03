@@ -37,4 +37,24 @@ class Store extends Model
     {
         return $this->hasMany(Credit::class);
     }
+
+    public function bottles(): HasMany
+    {
+        return $this->hasMany(Bottle::class);
+    }
+
+    public function items(): HasMany
+    {
+        return $this->hasMany(Item::class);
+    }
+
+    public function restocks(): HasMany
+    {
+        return $this->hasMany(Restock::class);
+    }
+
+    public function sales(): HasMany
+    {
+        return $this->hasMany(Sale::class);
+    }
 }
