@@ -6,6 +6,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CreditController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\RestockController;
+use App\Http\Controllers\SaleController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -32,7 +33,8 @@ Route::middleware('auth:api')->group(function () {
         'credits' => CreditController::class,
         'contacts' => ContactController::class,
         'bottles' => BottleController::class,
-        'restocks' => RestockController::class
+        'restocks' => RestockController::class,
+        'sales' => SaleController::class
     ]);
     Route::apiResource('users', UserController::class)->except('store', 'index');
 });
