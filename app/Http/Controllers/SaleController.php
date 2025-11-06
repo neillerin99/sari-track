@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
 use App\Http\Requests\Sales\CreateSaleRequest;
+use App\Http\Requests\Sales\UpdateSaleRequest;
 use App\Models\Sale;
 use App\Services\SaleService;
 use Illuminate\Http\Request;
@@ -73,15 +74,15 @@ class SaleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateSaleRequest $request, string $id)
     {
         try {
             $sale = Sale::find($id);
             if (!$sale) {
                 return ResponseHelper::error(['Sale not found'], 'Sale update failed', 404);
             }
-            // TODO: validation
-            $sale->update($request->all());
+            $validated = $request->validated();
+            $sale->update($validated);
             return ResponseHelper::success($sale, 'Sale updated');
         } catch (\Exception $e) {
             return ResponseHelper::error($e->getMessage(), 'Server Error', 500);

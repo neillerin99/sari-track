@@ -7,8 +7,7 @@ use App\Models\Store;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
-use Str;
-
+use Illuminate\Support\Str;
 class SaleService
 {
     public function storeData($validated): object
