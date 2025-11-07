@@ -24,6 +24,13 @@ class SaleService
             ];
         }
 
+        if ($validated['paid_amount'] < $validated['total_amount']) {
+            return (object) [
+                'status' => 'failed',
+                'data' => 'Paid amount is less than total amount!'
+            ];
+        }
+
         DB::beginTransaction();
         try {
             $transaction_no = $this->generateTransactionNumber($validated['store_id']);
@@ -47,7 +54,8 @@ class SaleService
             DB::commit();
             return (object) [
                 'status' => 'success',
-                'data' => $sale
+                'data' => $sale,
+                'change' => (int) $validated['paid_amount'] - (int) $validated['total_amount']
             ];
         } catch (Exception $e) {
             DB::rollBack();

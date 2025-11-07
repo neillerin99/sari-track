@@ -48,7 +48,7 @@ class SaleController extends Controller
             }
 
             if ($result->status === 'success') {
-                return ResponseHelper::success($result->data, 'Credit created!', 201);
+                return ResponseHelper::success(['sale' => $result->data, 'change' => $result->change], 'Credit created!', 201);
             }
         } catch (\Exception $e) {
             return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
