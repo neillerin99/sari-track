@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Sale;
+use App\Models\SaleItem;
 use App\Models\Store;
 use Carbon\Carbon;
 use Exception;
@@ -10,17 +11,51 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 class SaleService
 {
-    public function storeData($validated): object
+    public function storeData($validated, $items): object
     {
+        $sub_total = $items->sum(function ($item) {
+            return $item['price'] * $item['quantity'];
+        });
+
+        if ($sub_total !== $validated['total_amount']) {
+            return (object) [
+                'status' => 'failed',
+                'data' => 'Total price does not match computed price!'
+            ];
+        }
+
+        if ($validated['paid_amount'] < $validated['total_amount']) {
+            return (object) [
+                'status' => 'failed',
+                'data' => 'Paid amount is less than total amount!'
+            ];
+        }
+
         DB::beginTransaction();
         try {
             $transaction_no = $this->generateTransactionNumber($validated['store_id']);
             $sale = Sale::create([...$validated, 'transaction_no' => $transaction_no]);
-            // TODO: add logic for sales item creation
+
+            if ($items) {
+                $items->each(function ($item) use ($sale) {
+                    $item = (object) $item;
+                    info(json_encode($item));
+                    SaleItem::create([
+                        'sale_id' => $sale->id,
+                        'item_id' => $item->item_id ?? NULL,
+                        'name' => $item->name ?? NULL,
+                        'price' => $item->price,
+                        'quantity' => $item->quantity,
+                        'subtotal' => $item->price * $item->quantity,
+                        'is_manual' => $item->is_manual ?? false
+                    ]);
+                });
+            }
             DB::commit();
             return (object) [
                 'status' => 'success',
-                'data' => $sale
+                'data' => $sale,
+                'change' => (int) $validated['paid_amount'] - (int) $validated['total_amount']
             ];
         } catch (Exception $e) {
             DB::rollBack();

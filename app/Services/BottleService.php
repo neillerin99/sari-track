@@ -22,7 +22,6 @@ class BottleService
                 'is_free_form' => $request->is_free_form ?? false
             ]);
             if ($request->boolean('is_free_form') === true) {
-                info('geere');
                 return (object) [
                     'status' => 'success',
                     'data' => $bottle
