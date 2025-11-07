@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -31,6 +32,12 @@ class Sale extends Model
         return $this->belongsTo(Store::class);
     }
 
+    /**
+     * BelongsToMany: Items
+     * 
+     * Returns items linked to this sale that already exist in the `items` table.
+     * Excludes manually entered items that aren’t stored in `items`.
+     */
     public function items(): BelongsToMany
     {
         return $this->belongsToMany(Item::class, 'sale_items')
@@ -43,5 +50,16 @@ class Sale extends Model
             )
             ->as('sale_items')
             ->withTimestamps();
+    }
+
+    /**
+     * HasMany: Sale Items
+     * 
+     * Returns all sale item entries (both linked and manually entered),
+     * including those not stored in the `items` table.
+     */
+    public function sale_items(): HasMany
+    {
+        return $this->hasMany(SaleItem::class);
     }
 }

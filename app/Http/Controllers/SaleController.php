@@ -21,7 +21,7 @@ class SaleController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Sale::query()->where('store_id', $request->store_id);
+            $query = Sale::query()->where('store_id', $request->store_id)->with('sale_items');
 
             if ($request->has('search')) {
                 $query->where('customer_name', 'ilike', "%{$request->search}%")
@@ -42,7 +42,7 @@ class SaleController extends Controller
     {
         try {
             $validated = $request->validated();
-            $result = $this->sale_service->storeData($validated);
+            $result = $this->sale_service->storeData($validated, collect($request->items));
             if ($result->status === 'failed') {
                 return ResponseHelper::error($result->data, 'Credit store failed', 404);
             }
@@ -61,7 +61,7 @@ class SaleController extends Controller
     public function show(string $id)
     {
         try {
-            $sale = Sale::with('items')->find($id);
+            $sale = Sale::with('sale_items')->find($id);
             if (!$sale) {
                 return ResponseHelper::error(['Sale not found'], 'Sale fetched failed', 404);
             }
