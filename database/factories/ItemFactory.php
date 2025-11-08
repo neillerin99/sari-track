@@ -43,8 +43,8 @@ class ItemFactory extends Factory
             'unit' => $this->faker->randomElement(['pcs', 'sachet', 'bottle', 'pack']),
             'barcode' => $this->faker->ean13(),
             'description' => $this->faker->sentence(8),
-            'quantity' => $this->faker->numberBetween(0, 100),
-            'expiration_date' => $this->faker->optional()->dateTimeBetween('now', '+1 year'),
+            // 'quantity' => $this->faker->numberBetween(0, 100),
+            // 'expiration_date' => $this->faker->optional()->dateTimeBetween('now', '+1 year'),
             'cost_price' => $this->faker->randomFloat(2, 5, 100),
             'selling_price' => function (array $attrs) {
                 return $attrs['cost_price'] + rand(2, 20);

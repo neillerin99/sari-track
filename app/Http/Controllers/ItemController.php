@@ -18,7 +18,8 @@ class ItemController extends Controller
         try {
             $query = Item::with('category')
                 ->where('is_active', '=', true)
-                ->where('store_id', $request->store_id);
+                ->where('store_id', $request->store_id)
+                ->with('batches');
 
             if ($request->search) {
                 if (!$request->search_by || $request->search_by === 'item') {
@@ -64,7 +65,7 @@ class ItemController extends Controller
      */
     public function show(string $id)
     {
-        $item = Item::with('category')->find($id);
+        $item = Item::with('category', 'batches')->find($id);
 
         if (!$item) {
             return response()->json(['message' => 'Item not found!'], 404);
