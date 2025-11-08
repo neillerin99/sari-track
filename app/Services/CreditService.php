@@ -31,7 +31,10 @@ class CreditService
 
             if ($request->items) {
                 $items = collect($request->items);
-                if ($items->sum('price') != $request->total_price) {
+                $item_total = $items->sum(function ($item) {
+                    return $item['quantity'] * $item['price'];
+                });
+                if ($item_total != $request->total_price) {
                     DB::rollBack();
                     return (object) [
                         'status' => 'failed',
