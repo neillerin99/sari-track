@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 class SaleService
 {
+    public function __construct(protected BatchService $batch_service)
+    {
+    }
+
     public function storeData($validated, $items): object
     {
         $sub_total = $items->sum(function ($item) {
@@ -39,7 +43,11 @@ class SaleService
             if ($items) {
                 $items->each(function ($item) use ($sale) {
                     $item = (object) $item;
-                    info(json_encode($item));
+
+                    if (isset($item->item_id)) {
+                        $this->batch_service->processBatchSale($item->item_id, $item->quantity);
+                    }
+
                     SaleItem::create([
                         'sale_id' => $sale->id,
                         'item_id' => $item->item_id ?? NULL,
@@ -61,7 +69,11 @@ class SaleService
             DB::rollBack();
             return (object) [
                 'status' => 'failed',
-                'data' => $e->getMessage()
+                'data' => [
+                    'error' => $e->getMessage(),
+                    'line' => $e->getLine(),
+                    'file' => $e->getFile(),
+                ],
             ];
         }
     }

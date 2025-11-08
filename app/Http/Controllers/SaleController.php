@@ -44,11 +44,11 @@ class SaleController extends Controller
             $validated = $request->validated();
             $result = $this->sale_service->storeData($validated, collect($request->items));
             if ($result->status === 'failed') {
-                return ResponseHelper::error($result->data, 'Credit store failed', 404);
+                return ResponseHelper::error($result->data, 'Sale store failed', 400);
             }
 
             if ($result->status === 'success') {
-                return ResponseHelper::success(['sale' => $result->data, 'change' => $result->change], 'Credit created!', 201);
+                return ResponseHelper::success(['sale' => $result->data, 'change' => $result->change], 'Sale created!', 201);
             }
         } catch (\Exception $e) {
             return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
