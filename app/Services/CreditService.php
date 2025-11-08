@@ -31,7 +31,6 @@ class CreditService
 
             if ($request->items) {
                 $items = collect($request->items);
-                // TODO: validate also quantity not just price
                 if ($items->sum('price') != $request->total_price) {
                     DB::rollBack();
                     return (object) [
