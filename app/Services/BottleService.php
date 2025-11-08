@@ -45,7 +45,14 @@ class BottleService
             ];
         } catch (\Exception $e) {
             DB::rollBack();
-            throw $e;
+            return (object) [
+                'status' => 'failed',
+                'data' => [
+                    'error' => $e->getMessage(),
+                    'line' => $e->getLine(),
+                    'file' => $e->getFile(),
+                ],
+            ];
         }
     }
 
