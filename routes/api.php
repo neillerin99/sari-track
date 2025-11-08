@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BatchController;
 use App\Http\Controllers\BottleController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ContactController;
@@ -34,7 +35,8 @@ Route::middleware('auth:api')->group(function () {
         'contacts' => ContactController::class,
         'bottles' => BottleController::class,
         'restocks' => RestockController::class,
-        'sales' => SaleController::class
+        'sales' => SaleController::class,
+        'batches' => BatchController::class
     ]);
     Route::apiResource('users', UserController::class)->except('store', 'index');
 });

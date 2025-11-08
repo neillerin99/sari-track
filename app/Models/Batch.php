@@ -16,7 +16,9 @@ class Batch extends Model
         'quantity',
         'expiration_date',
         'received_at',
-        'notes'
+        'notes',
+        'status',
+        'batch_number'
     ];
 
     protected $casts = [
