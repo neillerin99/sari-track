@@ -14,20 +14,21 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Category::query();
-
-        if ($request->filled('include')) {
-            $includes = explode(',', $request->input('include'));
-            $query->with($includes);
+        try {
+            $query = Category::query()->where('store_id', $request->store_id)->orWhere('is_global', true);
+            if ($request->filled('include')) {
+                $includes = explode(',', $request->input('include'));
+                $query->with($includes);
+            }
+            if ($request->has('search')) {
+                $query->where('name', 'ilike', "%{$request->search}%");
+            }
+            $categories = $query->paginate(10)
+                ->appends($request->query());
+            return ResponseHelper::success($categories, 'Categories fetched!', 200, true);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
-
-        if ($request->has('search')) {
-            $query->where('name', 'ilike', "%{$request->search}%");
-        }
-
-        $categories = $query->paginate(10);
-
-        return response()->json($categories, 200);
     }
 
     /**
@@ -41,8 +42,8 @@ class CategoryController extends Controller
             $category = Category::create($validated);
 
             return ResponseHelper::success($category, 'Category created', 201);
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
 
     }
@@ -76,8 +77,8 @@ class CategoryController extends Controller
             $category->update($request->all());
 
             return response()->json(['data' => $category], 200);
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
 
     }
@@ -97,8 +98,8 @@ class CategoryController extends Controller
             $category->delete();
 
             return response()->json(['message' => 'Category deleted', 'data' => $category], 200);
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
 
     }

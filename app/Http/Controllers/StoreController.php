@@ -15,14 +15,17 @@ class StoreController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Store::with('user')->where('status', '=', 'active');
-
-        if ($request->filled('search')) {
-            $query->where('name', 'ilike', "%{$request->search}%");
+        try {
+            $query = Store::with('user')->where('status', '=', 'active');
+            $user = Auth::user();
+            if ($request->filled('search')) {
+                $query->where('name', 'ilike', "%{$request->search}%");
+            }
+            $items = $query->where('user_id', $user->id)->paginate(10)->appends($request->query());
+            return ResponseHelper::success($items, 'Stores fetched!', 200, true);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
-
-        $item = $query->paginate(10)->appends($request->query());
-        return response()->json($item, 200);
     }
 
     /**
@@ -40,8 +43,8 @@ class StoreController extends Controller
                 'user_id' => $user->id,
             ]);
             return ResponseHelper::success($store, 'Store created!');
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
     }
 
@@ -73,8 +76,8 @@ class StoreController extends Controller
 
             $store->update($request->all());
             return ResponseHelper::success($store, 'Item updated!');
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
     }
 
@@ -93,8 +96,8 @@ class StoreController extends Controller
             $store->delete();
 
             return ResponseHelper::success($store, 'Store deleted!');
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
 
     }

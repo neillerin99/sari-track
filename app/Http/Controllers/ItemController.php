@@ -15,20 +15,26 @@ class ItemController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Item::with('category')
-            ->where('is_active', '=', true);
+        try {
+            $query = Item::with('category')
+                ->where('is_active', '=', true)
+                ->where('store_id', $request->store_id)
+                ->with('batches');
 
-        if ($request->search) {
-            if (!$request->search_by || $request->search_by === 'item') {
-                $query->where('name', 'ilike', "%{$request->search}%");
-            } else {
-                $query->whereHas('category', function ($q) use ($request) {
-                    $q->where('name', 'ilike', "%{$request->search}%");
-                });
+            if ($request->search) {
+                if (!$request->search_by || $request->search_by === 'item') {
+                    $query->where('name', 'ilike', "%{$request->search}%");
+                } else {
+                    $query->whereHas('category', function ($q) use ($request) {
+                        $q->where('name', 'ilike', "%{$request->search}%");
+                    });
+                }
             }
+            $items = $query->paginate(10);
+            return ResponseHelper::success($items, 'Items fetched!', 200, true);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
-        $item = $query->paginate(10);
-        return response()->json($item, 200);
     }
 
     /**
@@ -49,8 +55,8 @@ class ItemController extends Controller
 
             $item = Item::create($validated);
             return ResponseHelper::success($item, 'Item created!', 201);
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
     }
 
@@ -59,7 +65,7 @@ class ItemController extends Controller
      */
     public function show(string $id)
     {
-        $item = Item::with('category')->find($id);
+        $item = Item::with('category', 'batches')->find($id);
 
         if (!$item) {
             return response()->json(['message' => 'Item not found!'], 404);
@@ -94,8 +100,8 @@ class ItemController extends Controller
 
             $item->update($request->all());
             return ResponseHelper::success($item, 'Item updated!');
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
     }
 
@@ -114,8 +120,8 @@ class ItemController extends Controller
             $item->delete();
 
             return ResponseHelper::success($item, 'Item deleted');
-        } catch (\Throwable $th) {
-            return ResponseHelper::error($th, 'Server Error', 500);
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e->getMessage(), 'Server Error', 500);
         }
     }
 }

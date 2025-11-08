@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Credit extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasUuids;
 
     protected $fillable = [
         'store_id',
@@ -17,7 +18,8 @@ class Credit extends Model
         'name',
         'status',
         'paid_on',
-        'notes'
+        'notes',
+        'is_free_form'
     ];
     protected $casts = [
         'paid_on' => 'date'
@@ -30,8 +32,9 @@ class Credit extends Model
 
     public function items(): BelongsToMany
     {
-        return $this->belongsToMany(Item::class)
+        return $this->belongsToMany(Item::class, 'credit_items')
             ->withPivot('quantity', 'price')
+            ->as('credit_items')
             ->withTimestamps();
     }
 }
