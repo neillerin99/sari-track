@@ -14,7 +14,7 @@ class BatchService
             ->whereIn('status', ['active', 'low_stock'])
             ->orderBy('batch_number', 'ASC')
             ->first();
-        if ($batch) {
+        if (!$batch) {
             throw new Exception('Batch not found!');
         }
         $quantity = $batch->quantity - $sale_quantity;

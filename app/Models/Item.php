@@ -80,4 +80,9 @@ class Item extends Model
     {
         return $this->hasMany(Batch::class);
     }
+
+    public function store(): BelongsTo
+    {
+        return $this->belongsTo(Store::class);
+    }
 }
