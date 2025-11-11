@@ -7,4 +7,4 @@ use Illuminate\Support\Facades\Artisan;
 //     $this->comment(Inspiring::quote());
 // })->purpose('Display an inspiring quote');
 
-Schedule::command("app:send-low-stock-alert")->everyMinute();
+Schedule::command("app:send-low-stock-alert")->weekly();

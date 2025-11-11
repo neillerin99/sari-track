@@ -93,7 +93,7 @@
                     @forelse ($items as $item)
                         <tr>
                             <td>{{ $item->item_name }}</td>
-                            <td class="highlight">{{ $item->batch_quantity }}</td>
+                            <td class="highlight">{{ $item->total_quantity }}</td>
                         </tr>
                     @empty
                         <tr>
