@@ -3,8 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Mail\LowStockAlert;
-use App\Models\Batch;
-use App\Models\Item;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -58,7 +56,7 @@ class SendLowStockAlert extends Command
             ->get();
 
         $stores->groupBy('email')->map(function ($items, $email) {
-            Mail::to($email)->send(new LowStockAlert($items, $items[0]->user_name ?? 'Owner'));
+            Mail::to($email)->queue(new LowStockAlert($items, $items[0]->user_name ?? 'Owner'));
         });
 
         info("Low Stock Alert Command Executed");
