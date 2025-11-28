@@ -37,4 +37,6 @@ class Credit extends Model
             ->as('credit_items')
             ->withTimestamps();
     }
+
+    // DELETE ME SAMPLE 2
 }
